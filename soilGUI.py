@@ -25,7 +25,32 @@ class SoilGui(QMainWindow):
         btn2.resize(btn2.sizeHint()) 
         btn2.move(150, 530) 
         
-    
+        # Text boxes
+        self.pH = QLineEdit(self) # Text box for pH levels
+        self.pH.move(700, 50)
+        self.pH.resize(180, 40)
+        self.pH.setText('Enter your soils pH')
+        
+        self.gSize = QLineEdit(self) # Text box for soil grain size in mm
+        self.gSize.move(700, 100)
+        self.gSize.resize(180, 40)
+        self.gSize.setText('Enter your soils grain size')
+
+        self.pH = QLineEdit(self) # Text box for pH levels
+        self.pH.move(700, 150)
+        self.pH.resize(180, 40)
+        self.pH.setText('Enter your soils pH')
+        
+        self.pH = QLineEdit(self) # Text box for pH levels
+        self.pH.move(700, 200)
+        self.pH.resize(180, 40)
+        self.pH.setText('Enter your soils pH')
+        
+        self.pH = QLineEdit(self) # Text box for pH levels
+        self.pH.move(700, 250)
+        self.pH.resize(180, 40)
+        self.pH.setText('Enter your soils pH')
+        
         # Menu bar stuff
         menubar = self.menuBar()
         fileMenu = menubar.addMenu('&File')
@@ -56,7 +81,7 @@ class SoilGui(QMainWindow):
         pixmap = QPixmap(imagePath)
         l1.setPixmap(pixmap)
         l1.move(50, 50)
-        l1.resize(100, 100)
+        l1.resize(300, 300)
         l1.show()
     
         
@@ -91,4 +116,3 @@ if __name__ == '__main__':
     app = QApplication(sys.argv) 
     w = SoilGui() # Opens an instance of the SoilGui class.
     sys.exit(app.exec_()) # Allows a clean exit of the application.
-    
