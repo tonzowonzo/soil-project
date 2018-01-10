@@ -57,10 +57,10 @@ Below shows the distributions of each type of soil particulate matter. Gravel is
 over 10% in soils while sand commonly makes up over 30% of a soil.
 '''
 sns.pairplot(data=df, vars=['T_CLAY', 'T_SILT', 'T_SAND', 'T_GRAVEL'])
-plt.hist(df['T_CLAY'].dropna(), bins=20)
-plt.hist(df['T_SILT'].dropna(), bins=20)
-plt.hist(df['T_SAND'].dropna(), bins=20)
-plt.hist(df['T_GRAVEL'].dropna(), bins=20)
+plt.hist(df['T_CLAY'], bins=20)
+plt.hist(df['T_SILT'], bins=20)
+plt.hist(df['T_SAND'], bins=20)
+plt.hist(df['T_GRAVEL'], bins=20)
 
 # Encoding categorical variable for soil class
 from sklearn.preprocessing import LabelEncoder, OneHotEncoder
@@ -86,6 +86,17 @@ rand_for.fit(X_train, y_train)
 from sklearn.model_selection import cross_val_predict, cross_val_score
 cross_val_score(rand_for, X_train, y_train, cv=3, scoring='accuracy')
 
+# Performing a grid search to see if we can achieve a better model.
+from sklearn.model_selection import GridSearchCV
+param_grid =  {'n_estimators': [5, 6, 7], 'bootstrap': [False],
+               'max_features': [None]}
+rand_for = RandomForestClassifier()
+grid_search = GridSearchCV(rand_for, param_grid, cv=5,
+                           scoring='accuracy')
+grid_search.fit(X_train, y_train)
+print(grid_search.best_params_)
+rand_for = RandomForestClassifier(max_features=None, n_estimators=5, bootstrap=False)
+rand_for.fit(X_train, y_train)
 # Check confusion matrix to see if the model is just selection most likely classes.
 y_pred = rand_for.predict(X_test)
 from sklearn.metrics import accuracy_score
@@ -94,7 +105,8 @@ from sklearn.metrics import recall_score
 from sklearn.metrics import precision_score
 recall = recall_score(y_test, y_pred, average='weighted')
 precision = precision_score(y_test, y_pred, average='weighted')
-
+accuracy = accuracy_score(y_test, y_pred)
+print('Recall: {}, Precision: {}, Accuracy: {}'.format(recall, precision, accuracy))
 # Trying gradient boosting instead
 
 
