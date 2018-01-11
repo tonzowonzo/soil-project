@@ -24,7 +24,10 @@ class SoilGui(QMainWindow):
         btn2 = QPushButton('Export', self) 
         btn2.resize(btn2.sizeHint()) 
         btn2.move(150, 530) 
-        
+        # Analyse button
+        btn3 = QPushButton('Analyse', self) 
+        btn3.resize(btn2.sizeHint()) 
+        btn3.move(250, 530) 
         # Text boxes
         self.pH = QLineEdit(self) # Text box for pH levels
         self.pH.move(700, 50)
@@ -51,6 +54,60 @@ class SoilGui(QMainWindow):
         self.pH.resize(180, 40)
         self.pH.setText('Enter your soils pH')
         
+        self.pH = QLineEdit(self) # Text box for pH levels
+        self.pH.move(700, 300)
+        self.pH.resize(180, 40)
+        self.pH.setText('Enter your soils pH')
+        
+        self.pH = QLineEdit(self) # Text box for pH levels
+        self.pH.move(700, 350)
+        self.pH.resize(180, 40)
+        self.pH.setText('Enter your soils pH')
+        
+        self.pH = QLineEdit(self) # Text box for pH levels
+        self.pH.move(700, 400)
+        self.pH.resize(180, 40)
+        self.pH.setText('Enter your soils pH')
+        
+        self.pH = QLineEdit(self) # Text box for pH levels
+        self.pH.move(480, 50)
+        self.pH.resize(180, 40)
+        self.pH.setText('Enter your soils pH')
+        
+        self.gSize = QLineEdit(self) # Text box for soil grain size in mm
+        self.gSize.move(480, 100)
+        self.gSize.resize(180, 40)
+        self.gSize.setText('Enter your soils grain size')
+
+        self.pH = QLineEdit(self) # Text box for pH levels
+        self.pH.move(480, 150)
+        self.pH.resize(180, 40)
+        self.pH.setText('Enter your soils pH')
+        
+        self.pH = QLineEdit(self) # Text box for pH levels
+        self.pH.move(480, 200)
+        self.pH.resize(180, 40)
+        self.pH.setText('Enter your soils pH')
+        
+        self.pH = QLineEdit(self) # Text box for pH levels
+        self.pH.move(480, 250)
+        self.pH.resize(180, 40)
+        self.pH.setText('Enter your soils pH')
+        
+        self.pH = QLineEdit(self) # Text box for pH levels
+        self.pH.move(480, 300)
+        self.pH.resize(180, 40)
+        self.pH.setText('Enter your soils pH')
+        
+        self.pH = QLineEdit(self) # Text box for pH levels
+        self.pH.move(480, 350)
+        self.pH.resize(180, 40)
+        self.pH.setText('Enter your soils pH')
+        
+        self.pH = QLineEdit(self) # Text box for pH levels
+        self.pH.move(480, 400)
+        self.pH.resize(180, 40)
+        self.pH.setText('Enter your soils pH')
         # Menu bar stuff
         menubar = self.menuBar()
         fileMenu = menubar.addMenu('&File')
@@ -116,3 +173,4 @@ if __name__ == '__main__':
     app = QApplication(sys.argv) 
     w = SoilGui() # Opens an instance of the SoilGui class.
     sys.exit(app.exec_()) # Allows a clean exit of the application.
+    
