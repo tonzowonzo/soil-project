@@ -10,8 +10,7 @@ from numpy import argmax
 df = pd.read_excel('HWSD_DATA.xlsx')
 df = df[df['ISSOIL'].isin([1])] # Drop all the non-soils
 df = df[df.SU_CODE90.notnull()] # Drop all non-classified soils.
-categorical_vars = ['SU_CODE74', 'SU_CODE85', 'SU_CODE90', 'T_TEXTURE', 'DRAINAGE', 'AWC_CLASS',
-                    'ROOTS', 'IL', 'SWR', 'ADD_PROP']
+
 # Get rid of all of the useless columns
 df = df.iloc[:, 7:]
 
@@ -36,7 +35,7 @@ plt.hist(x, bins=20)
 Soil class value counts, similar to above but for absolute classes instead of minimum.
 '''
 df['SOIL_CLASS'].unique()
-_ = df['SOIL_CLASS'].value_counts()
+x = df['SOIL_CLASS'].value_counts()
 plt.hist(x)
 y = df['SOIL_CLASS']
 '''
@@ -57,10 +56,10 @@ Below shows the distributions of each type of soil particulate matter. Gravel is
 over 10% in soils while sand commonly makes up over 30% of a soil.
 '''
 sns.pairplot(data=df, vars=['T_CLAY', 'T_SILT', 'T_SAND', 'T_GRAVEL'])
-plt.hist(df['T_CLAY'], bins=20)
-plt.hist(df['T_SILT'], bins=20)
-plt.hist(df['T_SAND'], bins=20)
-plt.hist(df['T_GRAVEL'], bins=20)
+plt.hist(df['T_CLAY'].dropna(), bins=20)
+plt.hist(df['T_SILT'].dropna(), bins=20)
+plt.hist(df['T_SAND'].dropna(), bins=20)
+plt.hist(df['T_GRAVEL'].dropna(), bins=20)
 
 # Encoding categorical variable for soil class
 from sklearn.preprocessing import LabelEncoder, OneHotEncoder
@@ -72,7 +71,14 @@ onehot = OneHotEncoder(sparse=False)
 y = onehot.fit_transform(y)
 
 x = df.iloc[:, 2:-1]
+columns = list(x.columns.values)
 
+# Some feature scaling
+from sklearn.preprocessing import StandardScaler
+sc_x = StandardScaler()
+x = sc_x.fit_transform(x) #need to fit and then xform
+# Rename columns with original names
+x.columns = columns
 # Create x and y train and test sets.
 from sklearn.model_selection import train_test_split
 X_train, X_test, y_train, y_test = train_test_split(x, y, test_size=0.2, random_state=42)
@@ -97,6 +103,7 @@ grid_search.fit(X_train, y_train)
 print(grid_search.best_params_)
 rand_for = RandomForestClassifier(max_features=None, n_estimators=5, bootstrap=False)
 rand_for.fit(X_train, y_train)
+
 # Check confusion matrix to see if the model is just selection most likely classes.
 y_pred = rand_for.predict(X_test)
 from sklearn.metrics import accuracy_score
@@ -107,6 +114,23 @@ recall = recall_score(y_test, y_pred, average='weighted')
 precision = precision_score(y_test, y_pred, average='weighted')
 accuracy = accuracy_score(y_test, y_pred)
 print('Recall: {}, Precision: {}, Accuracy: {}'.format(recall, precision, accuracy))
-# Trying gradient boosting instead
 
+# What about if we do some feature selection
+from sklearn.feature_selection import SelectFromModel
+print(rand_for.feature_importances_)
+model = SelectFromModel(rand_for, prefit=True)
+X_train_new = model.transform(X_train)
+X_test_new = model.transform(X_test)
+new_rand_for = RandomForestClassifier(max_features=None, n_estimators=5, bootstrap=False)
+new_rand_for.fit(X_train_new, y_train)
+
+y_pred = new_rand_for.predict(X_test_new)
+
+from sklearn.metrics import accuracy_score
+from sklearn.metrics import recall_score
+from sklearn.metrics import precision_score
+recall = recall_score(y_test, y_pred, average='weighted')
+precision = precision_score(y_test, y_pred, average='weighted')
+accuracy = accuracy_score(y_test, y_pred)
+print('Recall: {}, Precision: {}, Accuracy: {}'.format(recall, precision, accuracy))
 
