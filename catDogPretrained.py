@@ -56,3 +56,9 @@ model.save('catDogPretrained.h5')
 # Load the model
 from keras.models import load_model
 model = load_model('catDogPretrained.h5')
+
+# Get the values from the generator
+X_test = list(test_set.next())
+
+# Predict from a batch
+y_pred = model.predict(X_test[0])
