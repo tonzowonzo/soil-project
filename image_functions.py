@@ -68,6 +68,10 @@ def addNoiseToImage(add_noise_from=0, noise_type='GAUSSIAN'):
             cv2.imwrite(str(i + add_noise_from) + '.jpg', noisy)
             return noisy, img, gauss
 
+ '''
+ It's not actually required to use these functions, you can actually use ImageDataGenerator from the keras library for real time image
+ augmentation.
+ '''
 
         
 
