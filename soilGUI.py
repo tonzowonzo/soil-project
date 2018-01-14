@@ -4,7 +4,12 @@ from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QToolTip, QMessa
 QAction, qApp, QMenu, QHBoxLayout, QVBoxLayout, QInputDialog, QLineEdit, QFileDialog, QLabel
 from PyQt5.QtGui import QIcon, QFont, QPixmap  
 from PyQt5.QtCore import QCoreApplication
+import numpy as np
+import cv2
 
+#Load keras model
+from keras.models import load_model
+model = load_model('catDogPretrained.h5')
     
 class SoilGui(QMainWindow):
         
@@ -18,6 +23,7 @@ class SoilGui(QMainWindow):
         # Import button
         btn1 = QPushButton('Import', self) # Button object, called import.
         btn1.clicked.connect(self.getFile)
+        self.image_matrix = self.getFile
         btn1.resize(btn1.sizeHint()) # Gives a recommended size for the button.
         btn1.move(50, 530) # Moves the button.
         # Export button
@@ -26,6 +32,7 @@ class SoilGui(QMainWindow):
         btn2.move(150, 530) 
         # Analyse button
         btn3 = QPushButton('Analyse', self) 
+        btn3.clicked.connect(self.predictImage)
         btn3.resize(btn2.sizeHint()) 
         btn3.move(250, 530) 
         # Text boxes
@@ -131,7 +138,7 @@ class SoilGui(QMainWindow):
         self.setWindowIcon(QIcon('soilImg.png')) # Adds an icon to the window.
         self.show() # Shows the window.        
     
-    def getFile(self):
+    def getFile(self, image_matrix):
         l1 = QLabel(self)
         image = QFileDialog.getOpenFileName(None,'OpenFile','',"Image file(*.jpg *.png)")
         imagePath = image[0]
@@ -140,7 +147,16 @@ class SoilGui(QMainWindow):
         l1.move(50, 50)
         l1.resize(300, 300)
         l1.show()
-    
+        self.image_matrix = cv2.imread(imagePath)
+        print(self.image_matrix.shape)
+        
+    def predictImage(self):
+        predictLabel = QLabel(self)
+        predictLabel.move(50, 500)
+        predictLabel.show()
+        self.image_matrix.resize(299, 299)
+        predicted_class = model.predict(self.image_matrix)
+        predictLabel.setText(predicted_class)
         
     def center(self):
         '''
@@ -150,7 +166,6 @@ class SoilGui(QMainWindow):
         cp = QDesktopWidget().availableGeometry().center() # Screen resolution of monitor.
         qr.moveCenter(cp) # Moves the window to the center.
         self.move(qr.topLeft()) # Move the top left of the window to the top left of our centred rectangle
-        
         
     def closeEvent(self, event):
         '''
