@@ -6,7 +6,7 @@ from PyQt5.QtGui import QIcon, QFont, QPixmap
 from PyQt5.QtCore import QCoreApplication
 import numpy as np
 import cv2
-
+from keras.preprocessing import image
 #Load keras model
 from keras.models import load_model
 model = load_model('catDogPretrained.h5')
@@ -141,22 +141,24 @@ class SoilGui(QMainWindow):
     def getFile(self, image_matrix):
         l1 = QLabel(self)
         image = QFileDialog.getOpenFileName(None,'OpenFile','',"Image file(*.jpg *.png)")
-        imagePath = image[0]
-        pixmap = QPixmap(imagePath)
+        self.imagePath = image[0]
+        pixmap = QPixmap(self.imagePath)
         l1.setPixmap(pixmap)
         l1.move(50, 50)
         l1.resize(300, 300)
         l1.show()
-        self.image_matrix = cv2.imread(imagePath)
-        print(self.image_matrix.shape)
+#        self.image_matrix = cv2.imread(imagePath)
+#        print(self.image_matrix.shape)
         
     def predictImage(self):
         predictLabel = QLabel(self)
         predictLabel.move(50, 500)
         predictLabel.show()
-        self.image_matrix.resize(299, 299)
-        predicted_class = model.predict(self.image_matrix)
-        predictLabel.setText(predicted_class)
+        img = image.load_img(self.imagePath, target_size=(299, 299))
+        x = image.img_to_array(img)
+        x = np.expand_dims(x, axis=0)
+        pred = model.predict(x)
+        print(pred)
         
     def center(self):
         '''
@@ -179,13 +181,7 @@ class SoilGui(QMainWindow):
         else:
             event.ignore()
 
-#    def getFile(self):
-##        fname = QFileDialog.getOpenFileName(self, 'Open File',
-##                                            'c:\\', 'Image files (*.jpg *.png') # Opens browse
-##        pixMap = QPixmap(fname)
-#        self.l1.setPixmap(QPixmap('lilyDog.jpg'))
 if __name__ == '__main__':
     app = QApplication(sys.argv) 
     w = SoilGui() # Opens an instance of the SoilGui class.
     sys.exit(app.exec_()) # Allows a clean exit of the application.
-    
