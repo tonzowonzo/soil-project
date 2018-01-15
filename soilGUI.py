@@ -152,8 +152,6 @@ class SoilGui(QMainWindow):
         l1.move(50, 50)
         l1.resize(299, 299)
         l1.show()
-#        self.image_matrix = cv2.imread(imagePath)
-#        print(self.image_matrix.shape)
         
     def predictImage(self):
         '''
