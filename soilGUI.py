@@ -4,6 +4,7 @@ from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QToolTip, QMessa
 QAction, qApp, QMenu, QHBoxLayout, QVBoxLayout, QInputDialog, QLineEdit, QFileDialog, QLabel
 from PyQt5.QtGui import QIcon, QFont, QPixmap  
 from PyQt5.QtCore import QCoreApplication
+import PyQt5.QtCore
 import numpy as np
 import cv2
 from keras.preprocessing import image
@@ -139,18 +140,25 @@ class SoilGui(QMainWindow):
         self.show() # Shows the window.        
     
     def getFile(self, image_matrix):
+        '''
+        Fetches an image file from a file menu and display
+        '''
         l1 = QLabel(self)
         image = QFileDialog.getOpenFileName(None,'OpenFile','',"Image file(*.jpg *.png)")
         self.imagePath = image[0]
         pixmap = QPixmap(self.imagePath)
+        pixmap.scaled(299, 299, QtCore.Qt.KeepAspectRatio)
         l1.setPixmap(pixmap)
         l1.move(50, 50)
-        l1.resize(300, 300)
+        l1.resize(299, 299)
         l1.show()
 #        self.image_matrix = cv2.imread(imagePath)
 #        print(self.image_matrix.shape)
         
     def predictImage(self):
+        '''
+        Predicts the image class based on the input from keras CNN model.
+        '''
         predictLabel = QLabel(self)
         predictLabel.move(50, 500)
         predictLabel.show()
@@ -158,7 +166,8 @@ class SoilGui(QMainWindow):
         x = image.img_to_array(img)
         x = np.expand_dims(x, axis=0)
         pred = model.predict(x)
-        print(pred)
+        #print(pred)
+        print(pred.argmax(axis=-1))
         
     def center(self):
         '''
