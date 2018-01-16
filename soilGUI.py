@@ -1,15 +1,17 @@
 # Soil GUI
 import sys
 from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QToolTip, QMessageBox, QDesktopWidget, QMainWindow, \
-QAction, qApp, QMenu, QHBoxLayout, QVBoxLayout, QInputDialog, QLineEdit, QFileDialog, QLabel
-from PyQt5.QtGui import QIcon, QFont, QPixmap  
+QAction, qApp, QMenu, QHBoxLayout, QVBoxLayout, QInputDialog, QLineEdit, QFileDialog, QLabel, QStyleFactory
+from PyQt5.QtGui import QIcon, QFont, QPixmap
 from PyQt5.QtCore import QCoreApplication
+import PyQt5.QtCore
 import numpy as np
 import cv2
 from keras.preprocessing import image
 #Load keras model
 from keras.models import load_model
-model = load_model('catDogPretrained.h5')
+from keras.applications.inception_v3 import preprocess_input
+model = load_model('catDogPretrainedEnhanced.h5')
     
 class SoilGui(QMainWindow):
         
@@ -18,8 +20,6 @@ class SoilGui(QMainWindow):
         self.initUI()
         
     def initUI(self):
-        QToolTip.setFont(QFont('SansSerif', 10)) # Size 10 SansSerif font.
-        self.setToolTip('This is a <b>QWidget</b> widget') # Shows the tool tip when hovering over the window.
         # Import button
         btn1 = QPushButton('Import', self) # Button object, called import.
         btn1.clicked.connect(self.getFile)
@@ -139,26 +139,42 @@ class SoilGui(QMainWindow):
         self.show() # Shows the window.        
     
     def getFile(self, image_matrix):
+        '''
+        Fetches an image file from a file menu and display
+        '''
         l1 = QLabel(self)
         image = QFileDialog.getOpenFileName(None,'OpenFile','',"Image file(*.jpg *.png)")
         self.imagePath = image[0]
         pixmap = QPixmap(self.imagePath)
+        pixmap = pixmap.scaled(299, 299)
         l1.setPixmap(pixmap)
         l1.move(50, 50)
-        l1.resize(300, 300)
+        l1.resize(299, 299)
         l1.show()
-#        self.image_matrix = cv2.imread(imagePath)
-#        print(self.image_matrix.shape)
         
     def predictImage(self):
-        predictLabel = QLabel(self)
-        predictLabel.move(50, 500)
-        predictLabel.show()
+        '''
+        Predicts the image class based on the input from keras CNN model.
+        '''
+        self.predictLabel = None
+        self.predictLabel = QLabel(self)
+        self.predictLabel.move(50, 500)
+        self.predictLabel.resize(250, 40)
+        self.predictLabel.show()
         img = image.load_img(self.imagePath, target_size=(299, 299))
         x = image.img_to_array(img)
         x = np.expand_dims(x, axis=0)
+        x = preprocess_input(x)
         pred = model.predict(x)
         print(pred)
+        if pred > 0.5:
+            animal = 'dog'
+            probability = pred[0][0] * 100
+        elif pred <= 0.5:
+            animal = 'cat'
+            probability = (1 - pred[0][0]) * 100
+        self.predictLabel.setText('This is a {} with a {}% certainty'.format(animal, str(round(probability, 2))))
+        print('This is a {} with a {}% certainty'.format(animal, str(round(probability, 2))))
         
     def center(self):
         '''
@@ -183,5 +199,6 @@ class SoilGui(QMainWindow):
 
 if __name__ == '__main__':
     app = QApplication(sys.argv) 
+    app.setStyle(QStyleFactory.create('Windows'))
     w = SoilGui() # Opens an instance of the SoilGui class.
     sys.exit(app.exec_()) # Allows a clean exit of the application.
