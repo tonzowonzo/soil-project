@@ -1,6 +1,5 @@
 # Cat vs dog recognition with pretrained algorithm.
 from keras.applications.inception_v3 import InceptionV3
-from keras.preprocessing import image
 from keras.models import Model
 from keras.layers import Dense, GlobalAveragePooling2D
 from keras import backend as K
@@ -25,7 +24,7 @@ for layer in base_model.layers:
     layer.trainable = False
     
 # Compile the model
-model.compile(optimizer='adam', loss='binary_crossentropy')
+model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
 
 # Train the model on new data for a few epochs.
 from keras.preprocessing.image import ImageDataGenerator
@@ -48,14 +47,15 @@ test_set = test_datagen.flow_from_directory(r'Convolutional_Neural_Networks/data
                                             batch_size = 32,
                                             class_mode = 'binary')
 
-model.fit_generator(training_set, steps_per_epoch=25, epochs=5)
+model.fit_generator(training_set, steps_per_epoch=25, epochs=5, validation_data=test_set,
+                    validation_steps=10)
 
 # Save the model
-model.save('catDogPretrained.h5')
+model.save('catDogPretrainedEnhanced.h5')
 
 # Load the model
 from keras.models import load_model
-model = load_model('catDogPretrained.h5')
+model = load_model('catDogPretrainedEnhanced.h5')
 
 # Get the values from the generator
 X_test = list(test_set.next())
