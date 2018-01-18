@@ -1,12 +1,13 @@
 # A CNN for 12 class soil classification.
 
 # Soil classification with pretrained algorithm.
-from keras.applications.inception_v3 import InceptionV3
+from keras.applications.inception_v3 import InceptionV3, preprocess_input
 from keras.preprocessing import image
 from keras.models import Model
 from keras.layers import Dense, GlobalAveragePooling2D
 from keras import backend as K
-
+import os
+os.chdir(r'C:/Users/Tim/pythonscripts')
 # Import the pretrained model
 base_model = InceptionV3(weights='imagenet', include_top=False)
 
@@ -36,24 +37,25 @@ from keras.preprocessing.image import ImageDataGenerator
 train_datagen = ImageDataGenerator(rescale = 1./255,
                                    shear_range = 0.2,
                                    zoom_range = 0.2,
-                                   horizontal_flip = True
+                                   horizontal_flip = True,
                                    rotation_range = 20,
-                                   width_shift_range = 0.2
-                                   height_shift_range = 0.2)
+                                   width_shift_range = 30,
+                                   height_shift_range = 30)
 
 test_datagen = ImageDataGenerator(rescale = 1./255)
 
-training_set = train_datagen.flow_from_directory(r'Enter soil image pathway',
+training_set = train_datagen.flow_from_directory(r'soilimages/train',
                                                  target_size = (299, 299),
                                                  batch_size = 32,
                                                  class_mode = 'categorical')
 
-test_set = test_datagen.flow_from_directory(r'Enter soil image pathway',
+test_set = test_datagen.flow_from_directory(r'soilimages/test',
                                             target_size = (299, 299),
                                             batch_size = 32,
                                             class_mode = 'categorical')
 
-model.fit_generator(training_set, steps_per_epoch=25, epochs=5)
+model.fit_generator(training_set, steps_per_epoch=25, epochs=5, 
+                    validation_data=test_set, validation_steps=10)
 
 # Save the model
 model.save('soilNetPretrained.h5')
@@ -66,4 +68,12 @@ model = load_model('soilNetPretrained.h5')
 X_test = list(test_set.next())
 
 # Predict from a batch
-y_pred = model.predict(X_test[0])
+
+y_pred = model.predict(preprocess_input(X_test[0]))
+
+'''
+The model evaluates extremely poorly, I think it will be best to write a model from scratch so it specifically learns features for 
+soil. Currently there is a class imbalance issue also, the model simply predicts spodosol for every image, this can be fixed with more
+data in the other classes or using other loss functions for example an SVM based loss function which penalises the classifier for getting
+predictions wrong.
+'''
