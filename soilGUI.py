@@ -151,6 +151,7 @@ class SoilGui(QMainWindow):
         l1.move(50, 50)
         l1.resize(299, 299)
         l1.show()
+        self.predictLabel.deleteLater()
         
     def predictImage(self):
         '''
