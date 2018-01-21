@@ -37,4 +37,4 @@ Steps:
 
 6. Make the model work with raspberry pi's camera
 
-![alt text](https://www.github.com/tonzowonzo/soil-project/master/image.png)
+![Soil GUI](image.png)
