@@ -6,12 +6,10 @@ from PyQt5.QtGui import QIcon, QFont, QPixmap
 from PyQt5.QtCore import QCoreApplication
 import PyQt5.QtCore
 import numpy as np
-import cv2
 from keras.preprocessing import image
 #Load keras model
 from keras.models import load_model
-from keras.applications.inception_v3 import preprocess_input
-model = load_model('catDogPretrainedEnhanced.h5')
+model = load_model('soilNetPretrained4class.h5')
     
 class SoilGui(QMainWindow):
         
@@ -168,15 +166,23 @@ class SoilGui(QMainWindow):
         x = x / 255
         pred = model.predict(x)
         print(pred)
-        if pred > 0.5:
-            animal = 'dog'
+        className = pred.argmax()
+        print(className)
+        # Predict multi class classification
+        if className == 0:
+            soil = 'Mollisol'
             probability = pred[0][0] * 100
-        elif pred <= 0.5:
-            animal = 'cat'
-            probability = (1 - pred[0][0]) * 100
-        self.predictLabel.setText('This is a {} with a {}% certainty'.format(animal, str(round(probability, 2))))
-        print('This is a {} with a {}% certainty'.format(animal, str(round(probability, 2))))
-        
+        elif className == 1:
+            soil = 'Oxisol'
+            probability = pred[0][1] * 100
+        elif className == 2:
+            soil = 'Spodosol'
+            probability = pred[0][2] * 100
+        elif className == 3:
+            soil = 'Vertisol'
+            probability = pred[0][3] * 100
+        self.predictLabel.setText('This is a {} with {} probability'.format(soil, str(round(probability, 2))))
+ 
     def center(self):
         '''
         Centers the window in the middle of the screen.
@@ -203,3 +209,4 @@ if __name__ == '__main__':
     app.setStyle(QStyleFactory.create('Windows'))
     w = SoilGui() # Opens an instance of the SoilGui class.
     sys.exit(app.exec_()) # Allows a clean exit of the application.
+
