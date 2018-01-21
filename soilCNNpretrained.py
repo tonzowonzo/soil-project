@@ -39,8 +39,8 @@ train_datagen = ImageDataGenerator(rescale = 1./255,
                                    zoom_range = 0.2,
                                    horizontal_flip = True,
                                    rotation_range = 20,
-                                   width_shift_range = 30,
-                                   height_shift_range = 30)
+                                   width_shift_range = 0.2,
+                                   height_shift_range = 0.2)
 
 test_datagen = ImageDataGenerator(rescale = 1./255)
 
@@ -71,9 +71,3 @@ X_test = list(test_set.next())
 
 y_pred = model.predict(preprocess_input(X_test[0]))
 
-'''
-The model evaluates extremely poorly, I think it will be best to write a model from scratch so it specifically learns features for 
-soil. Currently there is a class imbalance issue also, the model simply predicts spodosol for every image, this can be fixed with more
-data in the other classes or using other loss functions for example an SVM based loss function which penalises the classifier for getting
-predictions wrong.
-'''
