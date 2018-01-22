@@ -1,0 +1,76 @@
+# Import libraries
+from keras.applications.inception_resnet_v2 import InceptionResNetV2
+from keras.preprocessing import image
+from keras.models import Model
+from keras.layers import Dense, GlobalAveragePooling2D
+from keras import backend as K
+from keras import optimizers
+import numpy as np
+import os
+os.chdir(r'C:/Users/Tim/pythonscripts')
+
+# Build the model.
+base_model = InceptionResNetV2(weights='imagenet', include_top=False)
+x = base_model.output
+x = GlobalAveragePooling2D()(x)
+
+# Add a fully connected layer.
+x = Dense(1024, activation='relu')(x)
+
+# Add another fully connected layer.
+x = Dense(2048, activation='relu')(x)
+
+# Add a classifying layer, 4 classes, softmax classification.
+predictions = Dense(4, activation='softmax')(x)
+
+# The model we'll train.
+model = Model(inputs=base_model.input, outputs=predictions)
+
+# Train only the top layer, freeze the weights of the others.
+for layer in base_model.layers:
+    layer.trainable = False   
+    
+# Compile the model
+optimiser = optimizers.Adagrad(lr=0.01, decay=0.0005)
+model.compile(optimizer=optimizser, loss='categorical_crossentropy', metrics=['accuracy'])
+
+# Train the model on new data for a few epochs.
+from keras.preprocessing.image import ImageDataGenerator
+
+# Create the generators for datasets.
+train_datagen = ImageDataGenerator(rescale = 1./255,
+                                   shear_range = 0.2,
+                                   zoom_range = 0.2,
+                                   horizontal_flip = True,
+                                   rotation_range = 20,
+                                   width_shift_range = 0.2,
+                                   height_shift_range = 0.2)
+
+test_datagen = ImageDataGenerator(rescale = 1./255)
+
+training_set = train_datagen.flow_from_directory(r'soilimages/train',
+                                                 target_size = (299, 299),
+                                                 batch_size = 32,
+                                                 class_mode = 'categorical')
+
+test_set = test_datagen.flow_from_directory(r'soilimages/test',
+                                            target_size = (299, 299),
+                                            batch_size = 32,
+                                            class_mode = 'categorical')
+
+model.fit_generator(training_set, steps_per_epoch=25, epochs=5, 
+                    validation_data=test_set, validation_steps=10)
+
+# Save the model
+model.save('soilNetPretrained4class3.h5')
+
+# Load the model
+from keras.models import load_model
+model = load_model('soilNetPretrained4class3.h5')
+
+# Get the values from the generator
+X_test = list(test_set.next())
+
+# Predict from a batch
+
+y_pred = model.predict(preprocess_input(X_test[0]))
