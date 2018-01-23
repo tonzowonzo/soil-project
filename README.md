@@ -24,17 +24,15 @@ Steps:
 	- Gather own images (Working on this)
 	- Label the horizons in the image
 
-2. Preprocess the images and data for input into a CNN combined algorithm
+2. Preprocess the images and data for input into a CNN combined algorithm (Created ensemble for 4 class classification)
 	- Trim images to same sizes and resolutions (Done)
 	- Homogenise any data (Done)
-	- Resample images and data
+	- Resample images and data (Done with imageDataGenerator
 
 3. Build the model
 
 4. Run the model
 
-5. Make the model work with open cv from laptops camera
-
-6. Make the model work with raspberry pi's camera
+5. Predict with the model.
 
 ![Soil GUI](image.png)
