@@ -21,6 +21,8 @@ df.fillna(df.median(), inplace=True)
 df['SOIL_CLASS'] = [x[:2] for x in df['SU_SYM90']]
 # Amount of each type of soil
 
+# Add a new feature on most common grain size.
+
 # Get rid of more columns I don't need
 df = df.iloc[:, 4:]
 '''
@@ -74,11 +76,11 @@ x = df.iloc[:, 2:-1]
 columns = list(x.columns.values)
 
 # Some feature scaling
-from sklearn.preprocessing import StandardScaler
-sc_x = StandardScaler()
-x = sc_x.fit_transform(x) #need to fit and then xform
-# Rename columns with original names
-x.columns = columns
+#from sklearn.preprocessing import StandardScaler
+#sc_x = StandardScaler()
+#x = sc_x.fit_transform(x) #need to fit and then xform
+#Rename columns with original names
+#x.columns = columns
 # Create x and y train and test sets.
 from sklearn.model_selection import train_test_split
 X_train, X_test, y_train, y_test = train_test_split(x, y, test_size=0.2, random_state=42)
@@ -116,14 +118,21 @@ accuracy = accuracy_score(y_test, y_pred)
 print('Recall: {}, Precision: {}, Accuracy: {}'.format(recall, precision, accuracy))
 
 # What about if we do some feature selection
-from sklearn.feature_selection import SelectFromModel
-print(rand_for.feature_importances_)
-model = SelectFromModel(rand_for, prefit=True)
-X_train_new = model.transform(X_train)
-X_test_new = model.transform(X_test)
+#from sklearn.feature_selection import SelectFromModel
+#print(rand_for.feature_importances_)
+#model = SelectFromModel(rand_for, prefit=True)
+#X_train_new = model.transform(X_train)
+#X_test_new = model.transform(X_test)
+#new_rand_for = RandomForestClassifier(max_features=None, n_estimators=5, bootstrap=False)
+#new_rand_for.fit(X_train_new, y_train)
+
+# Feature selection with k selections
+from sklearn.feature_selection import SelectKBest
+from sklearn.feature_selection import chi2
+X_train_new = SelectKBest(chi2, k=12).fit_transform(X_train, y_train)
+X_test_new = SelectKBest(chi2, k=12).fit_transform(X_test, y_test)
 new_rand_for = RandomForestClassifier(max_features=None, n_estimators=5, bootstrap=False)
 new_rand_for.fit(X_train_new, y_train)
-
 y_pred = new_rand_for.predict(X_test_new)
 
 from sklearn.metrics import accuracy_score
@@ -133,4 +142,3 @@ recall = recall_score(y_test, y_pred, average='weighted')
 precision = precision_score(y_test, y_pred, average='weighted')
 accuracy = accuracy_score(y_test, y_pred)
 print('Recall: {}, Precision: {}, Accuracy: {}'.format(recall, precision, accuracy))
-
