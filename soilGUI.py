@@ -7,10 +7,17 @@ from PyQt5.QtCore import QCoreApplication
 import PyQt5.QtCore
 import numpy as np
 from keras.preprocessing import image
-#Load keras model
+
+#Load keras models
 from keras.models import load_model
 model = load_model('soilNetPretrained4class.h5')
 model2 = load_model('soilNetPretrained4class3.h5')
+
+# Load random forest model.
+from sklearn.externals import joblib
+rand_forest_soil = joblib.load('random_forest_soil.pkl')
+
+
 class SoilGui(QMainWindow):
         
     def __init__(self):
@@ -34,86 +41,65 @@ class SoilGui(QMainWindow):
         btn3.resize(btn2.sizeHint()) 
         btn3.move(250, 530) 
         # Text boxes
+        pHlabel = QLabel(self)
+        pHlabel.setText('Enter topsoil pH')
+        pHlabel.resize(180, 40)
+        pHlabel.move(650, 90)
+        pHlabel.setToolTip('''
+        The pH of the water in the topsoil.
+                           ''')
         self.pH = QLineEdit(self) # Text box for pH levels
-        self.pH.move(700, 50)
+        self.pH.move(650, 120)
         self.pH.resize(180, 40)
-        self.pH.setText('Enter your soils pH')
+        self.pH.setText('Topsoil pH')
         
-        self.gSize = QLineEdit(self) # Text box for soil grain size in mm
-        self.gSize.move(700, 100)
-        self.gSize.resize(180, 40)
-        self.gSize.setText('Enter your soils grain size')
+        Drainagelabel = QLabel(self)
+        Drainagelabel.setText('Enter drainage class')
+        Drainagelabel.resize(180, 40)
+        Drainagelabel.move(650, 160)
+        Drainagelabel.setToolTip('''
+        A drainage class is a value between
+        1 and 7 where drainage is 1: Very poor, 
+        2: Poor, 3: Imperfectly, 4: Moderately well,
+        5: Well, 6: Somewhat excessive, 7: Excessive
+                                 ''')
+        self.drainage = QLineEdit(self) # Text box for soil grain size in mm
+        self.drainage.move(650, 190)
+        self.drainage.resize(180, 40)
+        self.drainage.setText('Drainage class')
 
-        self.pH = QLineEdit(self) # Text box for pH levels
-        self.pH.move(700, 150)
-        self.pH.resize(180, 40)
-        self.pH.setText('Enter your soils pH')
-        
-        self.pH = QLineEdit(self) # Text box for pH levels
-        self.pH.move(700, 200)
-        self.pH.resize(180, 40)
-        self.pH.setText('Enter your soils pH')
-        
-        self.pH = QLineEdit(self) # Text box for pH levels
-        self.pH.move(700, 250)
-        self.pH.resize(180, 40)
-        self.pH.setText('Enter your soils pH')
-        
-        self.pH = QLineEdit(self) # Text box for pH levels
-        self.pH.move(700, 300)
-        self.pH.resize(180, 40)
-        self.pH.setText('Enter your soils pH')
-        
-        self.pH = QLineEdit(self) # Text box for pH levels
-        self.pH.move(700, 350)
-        self.pH.resize(180, 40)
-        self.pH.setText('Enter your soils pH')
-        
-        self.pH = QLineEdit(self) # Text box for pH levels
-        self.pH.move(700, 400)
-        self.pH.resize(180, 40)
-        self.pH.setText('Enter your soils pH')
-        
-        self.pH = QLineEdit(self) # Text box for pH levels
-        self.pH.move(480, 50)
-        self.pH.resize(180, 40)
-        self.pH.setText('Enter your soils pH')
-        
-        self.gSize = QLineEdit(self) # Text box for soil grain size in mm
-        self.gSize.move(480, 100)
-        self.gSize.resize(180, 40)
-        self.gSize.setText('Enter your soils grain size')
+        texlabel = QLabel(self)
+        texlabel.setText('Enter USDA texture')
+        texlabel.resize(180, 40)
+        texlabel.move(650, 230)
+        texlabel.setToolTip('''
+        USDA texture is a value between 1 and 13 where
+        1: clay(heavy), 2: silty clay, 3: clay(light),
+        4: silty clay loam, 5: clay loam, 6: silt,
+        7: silt loam, 8: sandy clay, 9: loam,
+        10: sandy clay loam, 11: sandy loam, 12: loamy sand
+        and 13: sand
+                            ''')
+        self.texture = QLineEdit(self) # Text box for pH levels
+        self.texture.move(650, 260)
+        self.texture.resize(180, 40)
+        self.texture.setText('Topsoil USDA texture class')
 
-        self.pH = QLineEdit(self) # Text box for pH levels
-        self.pH.move(480, 150)
-        self.pH.resize(180, 40)
-        self.pH.setText('Enter your soils pH')
-        
-        self.pH = QLineEdit(self) # Text box for pH levels
-        self.pH.move(480, 200)
-        self.pH.resize(180, 40)
-        self.pH.setText('Enter your soils pH')
-        
-        self.pH = QLineEdit(self) # Text box for pH levels
-        self.pH.move(480, 250)
-        self.pH.resize(180, 40)
-        self.pH.setText('Enter your soils pH')
-        
-        self.pH = QLineEdit(self) # Text box for pH levels
-        self.pH.move(480, 300)
-        self.pH.resize(180, 40)
-        self.pH.setText('Enter your soils pH')
-        
-        self.pH = QLineEdit(self) # Text box for pH levels
-        self.pH.move(480, 350)
-        self.pH.resize(180, 40)
-        self.pH.setText('Enter your soils pH')
-        
-        self.pH = QLineEdit(self) # Text box for pH levels
-        self.pH.move(480, 400)
-        self.pH.resize(180, 40)
-        self.pH.setText('Enter your soils pH')
-                
+        toplabel = QLabel(self)
+        toplabel.setText('Enter topsoil bulk density')
+        toplabel.resize(180, 40)
+        toplabel.move(650, 300)
+        toplabel.setToolTip('''
+        Soil bulk density is a number which generally
+        is around the values of 1 to 1.6g/cm^3 however,
+        it can vary largely. In this case it is the field
+        bulk density (wet).                 
+                            ''')
+        self.bulkd = QLineEdit(self) # Text box for pH levels
+        self.bulkd.move(650, 330)
+        self.bulkd.resize(180, 40)
+        self.bulkd.setText('Topsoil bulk density')
+                          
         self.statusBar().showMessage('Ready') # Sets a status bar which says ready.
         self.setGeometry(900, 600, 900, 600) # Sets the size and place of the window.
         self.center()
@@ -185,6 +171,62 @@ class SoilGui(QMainWindow):
                                   str(round(probability1, 2)), soil2, str(round(probability2, 2))))
         print('This is a {} with {}% probability \n Or a {} with {}% probability'.format(soil1,
                                   str(round(probability1, 2)), soil2, str(round(probability2, 2))))
+        pH = None
+        bulk_density = None
+        drainage_class = None
+        USDA_texture_class = None
+        try:
+            if 0 < float(self.pH.text()) < 15:
+                pH = float(self.pH.text())
+                print(pH)                    
+        except:
+            pass        
+        try:
+            if 0 < float(self.bulkd.text()) < 4:
+                bulk_density = float(self.bulkd.text())
+                print(bulk_density)
+        except ValueError:
+            pass            
+        if self.drainage.text().isdigit():
+            drainage_class = int(self.drainage.text())
+            if drainage_class < 8 and drainage_class > 0:
+                print(drainage_class)
+        if self.texture.text().isdigit() and 0 < int(self.texture.text()) < 14:
+            USDA_texture_class = int(self.drainage.text())
+            print(USDA_texture_class)
+            
+        if None in [pH, bulk_density, drainage_class, USDA_texture_class]:
+            print('You did not input a or several numbers')
+        else:
+            nums_for_prediction = np.array([drainage_class, USDA_texture_class, bulk_density, pH])
+            nums_for_prediction = nums_for_prediction.reshape(1, -1)
+            prediction_forest = rand_forest_soil.predict(nums_for_prediction)
+            soil_type = np.argmax(prediction_forest)
+            print(prediction_forest)
+            
+            if soil_type == 0:
+                print('Random forest classifier: This is an Alfisol')
+            if soil_type == 1:
+                print('Random forest classifier: This is an Andisol')
+            elif soil_type == 2:
+                print('Random forest classifier: This is an Aridisol')
+            elif soil_type == 3:
+                print('Random forest classifier: This is an Entisol')
+            elif soil_type == 4:
+                print('Random forest classifier: This is a Histosol')
+            elif soil_type == 5:
+                print('Random forest classifier: This is an Inceptisol')
+            elif soil_type == 6:
+                print('Random forest classifier: This is a Mollisol')
+            elif soil_type == 7:
+                print('Random forest classifier: This is an Oxisol')
+            elif soil_type == 8:
+                print('Random forest classifier: This is a Spodosol')
+            elif soil_type == 9:
+                print('Random forest classifier: This is an Ultisol')
+            elif soil_type == 10:
+                print('Random forest classifier: This is a Vertisol')
+            
     def center(self):
         '''
         Centers the window in the middle of the screen.
@@ -195,8 +237,11 @@ class SoilGui(QMainWindow):
         self.move(qr.topLeft()) # Move the top left of the window to the top left of our centred rectangle
         
 if __name__ == '__main__':
-    app = QApplication(sys.argv) 
-    app.setStyle(QStyleFactory.create('Windows'))
+    app = QCoreApplication.instance()
+    if app is None:
+        app = QApplication(sys.argv)
+        app.setStyle(QStyleFactory.create('Windows'))
     w = SoilGui() # Opens an instance of the SoilGui class.
     sys.exit(app.exec_()) # Allows a clean exit of the application.
+
 
