@@ -10,8 +10,8 @@ from keras.preprocessing import image
 
 #Load keras models
 from keras.models import load_model
-model = load_model('soilNetPretrained4class.h5')
-model2 = load_model('soilNetPretrained4class3.h5')
+model = load_model('soilNetPretrained11class.h5')
+model2 = load_model('soilNetPretrained11class3.h5')
 
 # Load random forest model.
 from sklearn.externals import joblib
@@ -140,33 +140,78 @@ class SoilGui(QMainWindow):
         pred2 = model2.predict(x)
         pred = (pred1 + pred2) / 2
         print(pred)
-        indexes = np.argpartition(pred, 2)[-2:]
+        indexes = np.argpartition(pred, 10)[-2:]
         print(indexes)
         # Predict multi class classification
-        if indexes[0][3] == 0:
-            soil1 = 'Mollisol'
+        if indexes[0][10] == 0:
+            soil1 = 'Alfisol'
             probability1 = pred[0][0] * 100
-        elif indexes[0][3] == 1:
-            soil1 = 'Oxisol'
+        elif indexes[0][10] == 1:
+            soil1 = 'Andisol'
             probability1 = pred[0][1] * 100
-        elif indexes[0][3] == 2:
-            soil1 = 'Spodosol'
+        elif indexes[0][10] == 2:
+            soil1 = 'Aridisol'
             probability1 = pred[0][2] * 100
-        elif indexes[0][3] == 3:
-            soil1 = 'Vertisol'
+        elif indexes[0][10] == 3:
+            soil1 = 'Entisol'
             probability1 = pred[0][3] * 100
-        if indexes[0][2] == 0:
-            soil2 = 'Mollisol'
+        elif indexes[0][10] == 4:
+            soil1 = 'Histosol'
+            probability1 = pred[0][4] * 100
+        elif indexes[0][10] == 5:
+            soil1 = 'Inceptisol'
+            probability1 = pred[0][5] * 100
+        elif indexes[0][10] == 6:
+            soil1 = 'Mollisol'
+            probability1 = pred[0][6] * 100
+        elif indexes[0][10] == 7:
+            soil1 = 'Oxisol'
+            probability1 = pred[0][7] * 100
+        elif indexes[0][10] == 8:
+            soil1 = 'Spodosol'
+            probability1 = pred[0][8] * 100
+        elif indexes[0][10] == 9:
+            soil1 = 'Ultisol'
+            probability1 = pred[0][9] * 100
+        elif indexes[0][10] == 10:
+            soil1 = 'Vertisol'
+            probability1 = pred[0][10] * 100
+        print(soil1, probability1)
+        if indexes[0][9] == 0:
+            soil2 = 'Alfisol'
             probability2 = pred[0][0] * 100
-        elif indexes[0][2] == 1:
-            soil2 = 'Oxisol'
+        elif indexes[0][9] == 1:
+            soil2 = 'Andisol'
             probability2 = pred[0][1] * 100
-        elif indexes[0][2] == 2:
-            soil2 = 'Spodosol'
+        elif indexes[0][9] == 2:
+            soil2 = 'Aridisol'
             probability2 = pred[0][2] * 100
-        elif indexes[0][2] == 3:
-            soil2 = 'Vertisol'
+        elif indexes[0][9] == 3:
+            soil2 = 'Entisol'
             probability2 = pred[0][3] * 100
+        elif indexes[0][9] == 4:
+            soil2 = 'Histosol'
+            probability2 = pred[0][4] * 100
+        elif indexes[0][9] == 5:
+            soil2 = 'Inceptisol'
+            probability2 = pred[0][5] * 100
+        elif indexes[0][9] == 6:
+            soil2 = 'Mollisol'
+            probability2 = pred[0][6] * 100
+        elif indexes[0][9] == 7:
+            soil2 = 'Oxisol'
+            probability2 = pred[0][7] * 100
+        elif indexes[0][9] == 8:
+            soil2 = 'Spodosol'
+            probability2 = pred[0][8] * 100
+        elif indexes[0][9] == 9:
+            soil2 = 'Ultisol'
+            probability2 = pred[0][9] * 100
+        elif indexes[0][9] == 10:
+            soil2 = 'Vertisol'
+            probability2 = pred[0][10] * 100
+        print(soil2, probability2)
+
         self.predictLabel.setText('This is a {} with {}% probability \nOr a {} with {}% probability'.format(soil1,
                                   str(round(probability1, 2)), soil2, str(round(probability2, 2))))
         print('This is a {} with {}% probability \n Or a {} with {}% probability'.format(soil1,
@@ -205,27 +250,34 @@ class SoilGui(QMainWindow):
             print(prediction_forest)
             
             if soil_type == 0:
-                print('Random forest classifier: This is an Alfisol')
+                soil = 'Random forest classifier: This is an Alfisol'
             if soil_type == 1:
-                print('Random forest classifier: This is an Andisol')
+                soil = 'Random forest classifier: This is an Andisol'
             elif soil_type == 2:
-                print('Random forest classifier: This is an Aridisol')
+                soil = 'Random forest classifier: This is an Aridisol'
             elif soil_type == 3:
-                print('Random forest classifier: This is an Entisol')
+                soil = 'Random forest classifier: This is an Entisol'
             elif soil_type == 4:
-                print('Random forest classifier: This is a Histosol')
+                soil = 'Random forest classifier: This is a Histosol'
             elif soil_type == 5:
-                print('Random forest classifier: This is an Inceptisol')
+                soil = 'Random forest classifier: This is an Inceptisol'
             elif soil_type == 6:
-                print('Random forest classifier: This is a Mollisol')
+                soil = 'Random forest classifier: This is a Mollisol'
             elif soil_type == 7:
-                print('Random forest classifier: This is an Oxisol')
+                soil = 'Random forest classifier: This is an Oxisol'
             elif soil_type == 8:
-                print('Random forest classifier: This is a Spodosol')
+                soil = 'Random forest classifier: This is a Spodosol'
             elif soil_type == 9:
-                print('Random forest classifier: This is an Ultisol')
+                soil ='Random forest classifier: This is an Ultisol'
             elif soil_type == 10:
-                print('Random forest classifier: This is a Vertisol')
+                soil = 'Random forest classifier: This is a Vertisol'
+                
+            self.TreePredictLabel = QLabel(self)
+            self.TreePredictLabel.move(580, 330)
+            self.TreePredictLabel.resize(300, 100)
+            self.TreePredictLabel.setText(soil)
+            self.TreePredictLabel.show()
+            
             
     def center(self):
         '''
