@@ -10,8 +10,9 @@ from keras.preprocessing import image
 
 #Load keras models
 from keras.models import load_model
-model = load_model('soilNetPretrained11class.h5')
+model = load_model('SoilEnhancedPretrained.h5')
 model2 = load_model('soilNetPretrained11class3.h5')
+ANN_model = load_model('ANNsoilUSDA.h5')
 
 # Load random forest model.
 from sklearn.externals import joblib
@@ -140,7 +141,8 @@ class SoilGui(QMainWindow):
         pred2 = model2.predict(x)
         pred = (pred1 + pred2) / 2
         print(pred)
-        indexes = np.argpartition(pred, 10)[-2:]
+#        indexes = np.argpartition(pred, 10)[-2:]
+        indexes = np.argsort(pred)[-2:]
         print(indexes)
         # Predict multi class classification
         if indexes[0][10] == 0:
@@ -285,6 +287,17 @@ class SoilGui(QMainWindow):
         '''
         qr = self.frameGeometry() # Specifies the geometry of the main window.
         cp = QDesktopWidget().availableGeometry().center() # Screen resolution of monitor.
+        qr.moveCenter(cp) # Moves the window to the center.
+        self.move(qr.topLeft()) # Move the top left of the window to the top left of our centred rectangle
+        
+if __name__ == '__main__':
+    app = QCoreApplication.instance()
+    if app is None:
+        app = QApplication(sys.argv)
+        app.setStyle(QStyleFactory.create('Windows'))
+    w = SoilGui() # Opens an instance of the SoilGui class.
+    sys.exit(app.exec_()) # Allows a clean exit of the application.
+
         qr.moveCenter(cp) # Moves the window to the center.
         self.move(qr.topLeft()) # Move the top left of the window to the top left of our centred rectangle
         
