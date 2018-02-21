@@ -10,9 +10,9 @@ from keras.preprocessing import image
 
 #Load keras models
 from keras.models import load_model
-model = load_model('SoilEnhancedPretrained.h5')
-model2 = load_model('SoilEnhancedPretrained2.h5')
-ANN_model = load_model('ANNsoilUSDA.h5')
+model = load_model('SoilEnhancedPretrained2_12class.h5')
+model2 = load_model('SoilEnhancedPretrained12class.h5')
+#ANN_model = load_model('ANNsoilUSDA.h5')
 
 # Load random forest model.
 from sklearn.externals import joblib
@@ -149,73 +149,79 @@ class SoilGui(QMainWindow):
             indexes = np.argsort(pred)[-2:]
             print(indexes)
             # Predict multi class classification
-            if indexes[0][10] == 0:
+            if indexes[0][11] == 0:
                 soil1 = 'Alfisol'
                 probability1 = pred[0][0] * 100
-            elif indexes[0][10] == 1:
+            elif indexes[0][11] == 1:
                 soil1 = 'Andisol'
                 probability1 = pred[0][1] * 100
-            elif indexes[0][10] == 2:
+            elif indexes[0][11] == 2:
                 soil1 = 'Aridisol'
                 probability1 = pred[0][2] * 100
-            elif indexes[0][10] == 3:
+            elif indexes[0][11] == 3:
                 soil1 = 'Entisol'
                 probability1 = pred[0][3] * 100
-            elif indexes[0][10] == 4:
+            elif indexes[0][11] == 4:
                 soil1 = 'Histosol'
                 probability1 = pred[0][4] * 100
-            elif indexes[0][10] == 5:
+            elif indexes[0][11] == 5:
                 soil1 = 'Inceptisol'
                 probability1 = pred[0][5] * 100
-            elif indexes[0][10] == 6:
+            elif indexes[0][11] == 6:
                 soil1 = 'Mollisol'
                 probability1 = pred[0][6] * 100
-            elif indexes[0][10] == 7:
-                soil1 = 'Oxisol'
+            elif indexes[0][11] == 7:
+                soil1 = 'Non soil'
                 probability1 = pred[0][7] * 100
-            elif indexes[0][10] == 8:
-                soil1 = 'Spodosol'
+            elif indexes[0][11] == 8:
+                soil1 = 'Oxisol'
                 probability1 = pred[0][8] * 100
-            elif indexes[0][10] == 9:
-                soil1 = 'Ultisol'
+            elif indexes[0][11] == 9:
+                soil1 = 'Spodosol'
                 probability1 = pred[0][9] * 100
-            elif indexes[0][10] == 10:
-                soil1 = 'Vertisol'
+            elif indexes[0][11] == 10:
+                soil1 = 'Ultisol'
                 probability1 = pred[0][10] * 100
+            elif indexes[0][11] == 11:
+                soil1 = 'Vertisol'
+                probability1 = pred[0][11] * 100
             print(soil1, probability1)
-            if indexes[0][9] == 0:
+            if indexes[0][10] == 0:
                 soil2 = 'Alfisol'
                 probability2 = pred[0][0] * 100
-            elif indexes[0][9] == 1:
+            elif indexes[0][10] == 1:
                 soil2 = 'Andisol'
                 probability2 = pred[0][1] * 100
-            elif indexes[0][9] == 2:
+            elif indexes[0][10] == 2:
                 soil2 = 'Aridisol'
                 probability2 = pred[0][2] * 100
-            elif indexes[0][9] == 3:
+            elif indexes[0][10] == 3:
                 soil2 = 'Entisol'
                 probability2 = pred[0][3] * 100
-            elif indexes[0][9] == 4:
+            elif indexes[0][10] == 4:
                 soil2 = 'Histosol'
                 probability2 = pred[0][4] * 100
-            elif indexes[0][9] == 5:
+            elif indexes[0][10] == 5:
                 soil2 = 'Inceptisol'
                 probability2 = pred[0][5] * 100
-            elif indexes[0][9] == 6:
+            elif indexes[0][10] == 6:
                 soil2 = 'Mollisol'
                 probability2 = pred[0][6] * 100
-            elif indexes[0][9] == 7:
-                soil2 = 'Oxisol'
+            elif indexes[0][10] == 7:
+                soil2 = 'Non soil'
                 probability2 = pred[0][7] * 100
-            elif indexes[0][9] == 8:
-                soil2 = 'Spodosol'
+            elif indexes[0][10] == 8:
+                soil2 = 'Oxisol'
                 probability2 = pred[0][8] * 100
-            elif indexes[0][9] == 9:
-                soil2 = 'Ultisol'
+            elif indexes[0][10] == 9:
+                soil2 = 'Spodosol'
                 probability2 = pred[0][9] * 100
-            elif indexes[0][9] == 10:
-                soil2 = 'Vertisol'
+            elif indexes[0][10] == 10:
+                soil2 = 'Ultisol'
                 probability2 = pred[0][10] * 100
+            elif indexes[0][10] == 11:
+                soil2 = 'Vertisol'
+                probability2 = pred[0][11] * 100
             print(soil2, probability2)
     
             self.predictLabel.setText('This is a {} with {}% probability \nOr a {} with {}% probability'.format(soil1,
@@ -303,3 +309,4 @@ if __name__ == '__main__':
         app.setStyle(QStyleFactory.create('Windows'))
     w = SoilGui() # Opens an instance of the SoilGui class.
     sys.exit(app.exec_()) # Allows a clean exit of the application.
+
