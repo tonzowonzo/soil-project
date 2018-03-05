@@ -7,13 +7,13 @@ import os
 
 root_dir = 'C:\\Users\\Tim\\pythonscripts\\soilimages'
 soil = pd.DataFrame(columns=['soil_image_array', 'soil_type'], index=[x for x in range(1000)])
-
+X = pd.DataFrame(columns=[x for x in range(40000)], index=[x for x in range(1000)])
 # Iterate through folders
 i = 0
 for subdir, dirs, files in os.walk(root_dir):
     for file in files:
         img = cv2.imread(os.path.join(subdir, file), 0)
-        soil.soil_image_array[i] = img
+        soil.soil_image_array[i] = img.tolist()
         soil_name = subdir.split('\\')[-1]
         soil.soil_type[i] = soil_name
         i += 1
@@ -38,14 +38,21 @@ encoder = OneHotEncoder(sparse=False)
 y = encoder.fit_transform(y)
 
 # Define both dataframes
-X = soil.iloc[:, 0]
+soil_array = soil.iloc[:, 0]
 
+
+#for arry in X:
+#    arry.reshape(40000,)
 # Reshape values in X
+for i, arry in enumerate(X):
+    soil_array[i] = np.array(X[i])
+    
 for i, value in enumerate(X):
-    X[i] = value.reshape(40000, 1)
+    soil_array[i] = value.reshape(40000, 1)
+    
 
+#X = np.array(X)
 
-        
 # Get train test split
 from sklearn.model_selection import train_test_split
 X_train, X_test, y_train, y_test = train_test_split(X, y)
@@ -65,3 +72,4 @@ tree_clf.fit(X_train, y_train)
 from sklearn.datasets import fetch_mldata
 mnist = fetch_mldata('MNIST original')
 ada_clf.fit(mnist['data'], mnist['target'])
+mnist_X = mnist['data']
