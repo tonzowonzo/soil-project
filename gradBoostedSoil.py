@@ -44,13 +44,25 @@ soil_array = soil.iloc[:, 0]
 #for arry in X:
 #    arry.reshape(40000,)
 # Reshape values in X
-for i, arry in enumerate(X):
-    soil_array[i] = np.array(X[i])
+#for i, arry in enumerate(soil_array):
+#    soil_array[i] = np.array(X[i])
     
-for i, value in enumerate(X):
-    soil_array[i] = value.reshape(40000, 1)
-    
+#for i, value in enumerate(soil_array):
+#    soil_array[i] = value.reshape(40000, 1)
 
+# Append individual values in list to columns, this is extremely inefficient. 
+for i, array in enumerate(soil_array):
+    count = 0
+    for j in array:
+        for k in j:
+            X[count][i] = k
+            count += 1
+    if i % 10 == 0:
+        print(i)
+            
+# Save dataframe to csv
+X.to_csv()       
+X = X.dropna()
 #X = np.array(X)
 
 # Get train test split
@@ -58,9 +70,14 @@ from sklearn.model_selection import train_test_split
 X_train, X_test, y_train, y_test = train_test_split(X, y)
 
 # Adaboost classifier
+from sklearn.tree import DecisionTreeClassifier
 from sklearn.ensemble import AdaBoostClassifier
-ada_clf = AdaBoostClassifier()
+ada_clf = AdaBoostClassifier(DecisionTreeClassifier(max_depth=2),
+                             n_estimators=500, learning_rate=1,
+                             algorithm='SAMME.R')
 ada_clf.fit(X_train, y_train)
+
+# Gradient boosted classifier.
 
 
 # Tree classifier
@@ -68,8 +85,16 @@ from sklearn.tree import DecisionTreeClassifier
 tree_clf = DecisionTreeClassifier()
 tree_clf.fit(X_train, y_train)
 
+y_pred = tree_clf.predict(X_test)
+
+from xgboost import XGBClassifier
+xg_clf = XGBClassifier(n_estimators=500, objective='multi:softmax')
+
 # X
 from sklearn.datasets import fetch_mldata
 mnist = fetch_mldata('MNIST original')
 ada_clf.fit(mnist['data'], mnist['target'])
 mnist_X = mnist['data']
+
+from sklearn.metrics import  accuracy_score
+print(accuracy_score(y_test, y_pred))
