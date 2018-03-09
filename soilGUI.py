@@ -7,6 +7,7 @@ from PyQt5.QtCore import QCoreApplication
 import PyQt5.QtCore
 import numpy as np
 from keras.preprocessing import image
+import matplotlib.pyplot as plt
 
 #Load keras models
 from keras.models import load_model
@@ -140,11 +141,16 @@ class SoilGui(QMainWindow):
             x = image.img_to_array(img)
             x = np.expand_dims(x, axis=0)
             x = x / 255
+            
             # Ensemble with 2 models
             pred1 = model.predict(x)
             pred2 = model2.predict(x)
             pred = (pred1 + pred2) / 2
             print(pred)
+            
+            # Plot the probabilities of each soil type
+            plt.bar([i for i in range(12)], pred[0])
+            
     #        indexes = np.argpartition(pred, 10)[-2:]
             indexes = np.argsort(pred)[-2:]
             print(indexes)
@@ -309,4 +315,5 @@ if __name__ == '__main__':
         app.setStyle(QStyleFactory.create('Windows'))
     w = SoilGui() # Opens an instance of the SoilGui class.
     sys.exit(app.exec_()) # Allows a clean exit of the application.
+
 
