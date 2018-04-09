@@ -1,38 +1,22 @@
-# soil-project
-project for soil classification - includes all functions used for image manipulation
+# Soil Classification Project
 
-The aim of this project is to classify different types of soil based on image recognition via CNN's.
+## Project for Soil Classification Utilising Convolutional Neural Networks
 
-The data used for the project comes from google images and http://www.fao.org/soils-portal/soil-survey/soil-maps-and-databases/harmonized-world-soil-database-v12/en/ is used for the random forest classifier.
+### Aim
+The aim of this project is to classify different types of soil based on image recognition via convolutional neural networks (CNNs). They are to be classified into the 12 USDA soil classes and a 13th class which is all other images. The accuracy will also be improved by using supporting data on soil pH, texture and drainage which will be used to ensemble the CNN with a random forest algorithm.
 
-Goal: To make a computer vision soil classifier that makes use of both images and input data.
-	- Also find certain horizons in the soil
-	- Also create a simple GUI for it (started)
-	- Allow to run off not just images but data input too, both the data and the
-	  soil image will vote 50% each for the highest % chance of what soil type it is. 
-	  If there is no data input we will only use the values from the image. Else we can
-	  use only certain values to trim the probabilities of a soil being a particular type 
-	  (if I can find info on this).
-	- Each piece of data added will tweak the percentiles, with 1 data point added ie pH 
-	  the influence of the random forest classifier will be very low (5%) when all data points
-	  are added the influence will be much higher (95%). This will allow an ensemble method to
-	  be most accurate based on the information given.
-Steps:
+### Data
+The data used for the project comes from google images for the CNN. These were then saved into separate files based on their soil class, approximately 50 images from each soil type were gathered. For the non-image soil data it was gathered from: http://www.fao.org/soils-portal/soil-survey/soil-maps-and-databases/harmonized-world-soil-database-v12/en/ and is used for the random forest soil classifier.
 
-1. Gather labelled images and data from soil databases
-	- Create a script to gather images (labelled) and data (Done)
-	- Gather own images (Working on this)
-	- Label the horizons in the image
+### Method
+ 1. The images are preprocessed using the keras ImageDataGenerator class, this resizes the images to the appropriate size for the algorithm (299, 299, 3) pixels as well as applied several image augmentation methods. Including: Altering the shear range, zoom range, rotation range, width and height ranges as well as flipping the image. The images were also all normalised so that the elements range from 0 -> 1 instead of 0 -> 255.
 
-2. Preprocess the images and data for input into a CNN combined algorithm (Created ensemble for 4 class classification)
-	- Trim images to same sizes and resolutions (Done)
-	- Homogenise any data (Done)
-	- Resample images and data (Done with imageDataGenerator
+ 2. 
+### Results
 
-3. Build the model
+### Conclusion
 
-4. Run the model
 
-5. Predict with the model.
+
 
 ![Soil GUI](image.png)
