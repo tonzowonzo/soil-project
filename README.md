@@ -11,7 +11,7 @@ The data used for the project comes from google images for the CNN. These were t
 ### Method
  1. The images are preprocessed using the keras ImageDataGenerator class, this resizes the images to the appropriate size for the algorithm (299, 299, 3) pixels as well as applied several image augmentation methods. Including: Altering the shear range, zoom range, rotation range, width and height ranges as well as flipping the image. The images were also all normalised so that the elements range from 0 -> 1 instead of 0 -> 255.
 
- 2. 
+ 2. Both Xception and InceptionV3 pretrained models were used for weight initialisation. 
 ### Results
 
 ### Conclusion
